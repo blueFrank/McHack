@@ -5,6 +5,7 @@
 #include "../Header/varglob.h"
 #include "../Header/float3.h"
 
+<<<<<<< HEAD
 //pointeur vers le modele
 GLUquadric *sphere = NULL;
 Planet planeteTest;
@@ -13,6 +14,15 @@ int y_;
 int z_;
 
 void placerCamera(int x, int y, int z);
+=======
+//pointeurs utilisees
+GLUquadric* sphere = nullptr;
+Planet* planetes = nullptr;
+
+//nb de planete max et affichee en ce moment;
+const int MAX_PLANETE = 100;
+int nPlanete = 5;
+>>>>>>> 59dbbeaf23152e8f3b4798b3e33a73e3bb9b3f22
 
 void initialisation()
 {
@@ -34,17 +44,22 @@ void initialisation()
    //pointe vers le modele de la sphere
    sphere = gluNewQuadric();
 
+   //Cree toutes les planetes
+   planetes = new Planet[MAX_PLANETE];
+
    // activer le mélange de couleur pour bien voir les possibles plis à l'affichage
    glEnable( GL_BLEND );
    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
    glEnable(GL_POINT_SMOOTH);
 }
 
-void afficherPlanete(Planet& planete){
-	glColor3f(planete.color[0], planete.color[1], planete.color[2]);
-	gluSphere(sphere, planete.rayon, 16, 16);
+void updatePlanet(Planet& planete, int temps){
+	planete.position[0] += planete.speed[0] * temps / 1000.;
+	planete.position[1] += planete.speed[1] * temps / 1000.;
+	planete.position[2] += planete.speed[2] * temps / 1000.;
 }
 
+<<<<<<< HEAD
 void placerCamera(int x, int y, int z)
 {
 	
@@ -71,6 +86,42 @@ void afficherScene()
    placerCamera(x_, y_, z_);
 
    afficherPlanete(planeteTest);
+=======
+static void animer(int tempsPrec)
+{
+	// obtenir le temps depuis le début du programme, en millisecondes
+	int tempsCour = glutGet(GLUT_ELAPSED_TIME);
+	if (tempsPrec == 0) tempsPrec = tempsCour;
+
+	// temps d'attente en secondes avant le prochain affichage
+	const int FPS = 60;  // en "images/seconde"
+	const int delai = 1000 / FPS;  // en "millisecondes/image" (= 1000 millisecondes/seconde  /  images/seconde)
+	glutTimerFunc(delai, animer, tempsCour);
+
+	//Update chaque planete
+	for (int i = 0; i < nPlanete; i++)
+		updatePlanet(planetes[i], delai);
+
+	// indiquer qu'il faut afficher à nouveau
+	glutPostRedisplay();
+}
+
+void afficherPlanete(Planet& planete){
+	glPushMatrix(); {
+		glTranslatef(planete.position[0], planete.position[1], planete.position[2]);
+		glColor3f(planete.color[0], planete.color[1], planete.color[2]);
+		gluSphere(sphere, planete.rayon, 16, 16);
+	} glPopMatrix();
+}
+
+void afficherScene()
+{
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	//affiche chacune des planetes
+	for (int i = 0; i < nPlanete; i++)
+		afficherPlanete(planetes[i]);	
+>>>>>>> 59dbbeaf23152e8f3b4798b3e33a73e3bb9b3f22
 
    glutSwapBuffers();
 }
@@ -91,6 +142,7 @@ void clavier( unsigned char touche, int x, int y )
    case 27:		//escape(ascii)
    case '\e':   //escape
       glutDestroyWindow( g_feneID );
+	  delete[] planetes;
       exit( 0 );
       break;
 
@@ -168,7 +220,11 @@ int main( int argc, char *argv[] )
    // référencement de la fonction de rappel pour le clic de la souris
    glutMouseFunc( sourisClic );
 
+   //initialise la scene
    initialisation();
+
+   //demarre l'animation
+   animer(0);
 
    // boucle principale de gestion des événements
    glutMainLoop();
