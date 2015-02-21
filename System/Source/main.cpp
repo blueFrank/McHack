@@ -1,5 +1,6 @@
 #include <iostream>
 #include <GL/glut.h>
+#include <math.h>
 
 #include "../Header/Planet.h"
 #include "../Header/varglob.h"
@@ -32,6 +33,7 @@ void initialisation()
    planetes = new Planet[MAX_PLANETE];
 
    // activer le mélange de couleur pour bien voir les possibles plis à l'affichage
+   glEnable(GL_SMOOTH);
    glEnable( GL_BLEND );
    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
@@ -40,6 +42,35 @@ void updatePlanet(Planet& planete, int temps){
 	planete.position[0] += planete.speed[0] * temps / 1000.;
 	planete.position[1] += planete.speed[1] * temps / 1000.;
 	planete.position[2] += planete.speed[2] * temps / 1000.;
+}
+
+void collision(Planet& planet1, Planet& planet2){
+
+	//calcul distance
+	double deltaX = fabs(planet1.position[0] - planet2.position[0]);
+	double deltaY = fabs(planet1.position[1] - planet2.position[1]);
+	double deltaZ = fabs(planet1.position[2] - planet2.position[2]);
+	double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2) + pow(deltaZ, 2));
+
+	//Si collision, inverse les vitesses
+	if (distance < planet1.rayon + planet2.rayon){
+
+		//calcul du vecteur normal de reflexion
+		double vecNormal[3] = { planet1.position[0] - planet2.position[0],
+								planet1.position[1] - planet2.position[1],
+								planet1.position[2] - planet2.position[2] };
+
+
+		planet1.speed[0] -= planet1.speed[0];
+		planet1.speed[1] -= planet1.speed[1];
+		planet1.speed[2] -= planet1.speed[2];
+		planet2.speed[0] -= planet2.speed[0];
+		planet2.speed[1] -= planet2.speed[1];
+		planet2.speed[2] -= planet2.speed[2];
+	}
+
+	//ressort de la planete
+	
 }
 
 static void animer(int tempsPrec)
@@ -56,6 +87,13 @@ static void animer(int tempsPrec)
 	//Update chaque planete
 	for (int i = 0; i < nPlanete; i++)
 		updatePlanet(planetes[i], delai);
+
+	//Verifie si collision TODO:UTILISER QUADTREE
+	for (int i = 0; i < nPlanete; i++)
+		for (int j = 0; j < nPlanete; j++)
+			if (i != j)
+				collision(planetes[i], planetes[j]);
+
 
 	// indiquer qu'il faut afficher à nouveau
 	glutPostRedisplay();
@@ -77,7 +115,7 @@ void afficherScene()
 	for (int i = 0; i < nPlanete; i++)
 		afficherPlanete(planetes[i]);	
 
-   glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 void redimensionnement( GLsizei w, GLsizei h )

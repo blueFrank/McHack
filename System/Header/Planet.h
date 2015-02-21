@@ -10,8 +10,8 @@ float MAX_VITESSE = 1;
 float MIN_VITESSE = -1;
 float MAX_COLOR = 0.9;
 float MIN_COLOR = 0.1;
-float MAX_POSITION = 100;
-float MIN_POSITION = -100;
+float MAX_POSITION = 10;
+float MIN_POSITION = -10;
 
 class Planet{
 public:
