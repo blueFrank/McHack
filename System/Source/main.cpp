@@ -7,6 +7,12 @@
 
 //pointeur vers le modele
 GLUquadric *sphere = NULL;
+Planet planeteTest;
+int x_;
+int y_;
+int z_;
+
+void placerCamera(int x, int y, int z);
 
 void initialisation()
 {
@@ -16,9 +22,14 @@ void initialisation()
    // définir le pipeline graphique
    glMatrixMode( GL_PROJECTION );
    glLoadIdentity();
-   glOrtho( -12, 12, -8, 8, -10, 10 );
+   gluPerspective(45, (GLdouble)g_largeur / (GLdouble)g_hauteur,15, 300);
    glMatrixMode( GL_MODELVIEW );
    glLoadIdentity();
+   x_ = 0;
+   y_ = -20;
+   z_ = 0;
+   //placerCamera(x_, y_, z_);
+ 
 
    //pointe vers le modele de la sphere
    sphere = gluNewQuadric();
@@ -26,6 +37,7 @@ void initialisation()
    // activer le mélange de couleur pour bien voir les possibles plis à l'affichage
    glEnable( GL_BLEND );
    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+   glEnable(GL_POINT_SMOOTH);
 }
 
 void afficherPlanete(Planet& planete){
@@ -33,17 +45,32 @@ void afficherPlanete(Planet& planete){
 	gluSphere(sphere, planete.rayon, 16, 16);
 }
 
+void placerCamera(int x, int y, int z)
+{
+	
+	gluLookAt(x, y, z,  0, 0, 0,  0, 0, 1);
+
+	std::cout << x << std::endl;
+	std::cout << y << std::endl;
+	std::cout << z << std::endl;
+}
+
 void afficherScene()
 {
+
    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-   Planet planeteTest;
+   // définir le pipeline graphique
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   gluPerspective(70.0, (GLdouble)g_largeur / (GLdouble)g_hauteur, 0.1, 300.0);
+
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+
+   placerCamera(x_, y_, z_);
+
    afficherPlanete(planeteTest);
-
-
-
-					
-
 
    glutSwapBuffers();
 }
@@ -81,7 +108,28 @@ void clavier( unsigned char touche, int x, int y )
 	  // la fenêtre a besoin d'être réafficher
 	  glutPostRedisplay();
       break;
+
+   case 'w':
+	   x_ += 10;
+	   break;
+   case 's':
+	   x_ -= 10;
+	   break;
+   case 'a':
+	   y_ += 10;
+	   break;
+   case 'd':
+	   y_ -= 10;
+	   break;
+   case 'z':
+	   z_ += 10;
+	   break;
+   case 'x':
+	   z_ -= 10;
+	 
    }
+
+   afficherScene();
 }
 
 void clavierSpecial( int touche, int x, int y )
