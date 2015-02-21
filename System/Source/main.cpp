@@ -5,24 +5,27 @@
 #include "../Header/varglob.h"
 #include "../Header/float3.h"
 
-<<<<<<< HEAD
 //pointeur vers le modele
-GLUquadric *sphere = NULL;
-Planet planeteTest;
-int x_;
-int y_;
-int z_;
-
-void placerCamera(int x, int y, int z);
-=======
-//pointeurs utilisees
-GLUquadric* sphere = nullptr;
+GLUquadric *sphere = nullptr;
 Planet* planetes = nullptr;
+float rayon_;
+float theta_; 
+float phi_;
+
+
+
+void placerCamera(int rayon, int theta, int phi)
+{
+	float phiRad = DEG2RAD(phi);
+	float thetaRad = DEG2RAD(theta);
+
+	gluLookAt(rayon*cos(phiRad)*sin(thetaRad), rayon*cos(phiRad)*cos(thetaRad), rayon*sin(phiRad), 0, 0, 0, 0, 0, 1);
+}
 
 //nb de planete max et affichee en ce moment;
 const int MAX_PLANETE = 100;
-int nPlanete = 5;
->>>>>>> 59dbbeaf23152e8f3b4798b3e33a73e3bb9b3f22
+int nPlanete = 50;
+
 
 void initialisation()
 {
@@ -32,12 +35,13 @@ void initialisation()
    // définir le pipeline graphique
    glMatrixMode( GL_PROJECTION );
    glLoadIdentity();
-   gluPerspective(45, (GLdouble)g_largeur / (GLdouble)g_hauteur,15, 300);
+   gluPerspective(70., (GLdouble)g_largeur / (GLdouble)g_hauteur, 0.1, 10000);
+
    glMatrixMode( GL_MODELVIEW );
    glLoadIdentity();
-   x_ = 0;
-   y_ = -20;
-   z_ = 0;
+
+   rayon_ = -20;
+
    //placerCamera(x_, y_, z_);
  
 
@@ -47,7 +51,12 @@ void initialisation()
    //Cree toutes les planetes
    planetes = new Planet[MAX_PLANETE];
 
-   // activer le mélange de couleur pour bien voir les possibles plis à l'affichage
+   planetes[0].position[0] = 0.0;
+   planetes[0].position[1] = 0.0;
+   planetes[0].position[2] = 0.0;
+
+   // activer le mélange de couleur pour bien voir les possibles plis à l'affichageh
+   glEnable(GL_DEPTH);
    glEnable( GL_BLEND );
    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
    glEnable(GL_POINT_SMOOTH);
@@ -59,16 +68,15 @@ void updatePlanet(Planet& planete, int temps){
 	planete.position[2] += planete.speed[2] * temps / 1000.;
 }
 
-<<<<<<< HEAD
-void placerCamera(int x, int y, int z)
-{
-	
-	gluLookAt(x, y, z,  0, 0, 0,  0, 0, 1);
 
-	std::cout << x << std::endl;
-	std::cout << y << std::endl;
-	std::cout << z << std::endl;
+void afficherPlanete(Planet& planete){
+	glPushMatrix(); {
+		glTranslatef(planete.position[0], planete.position[1], planete.position[2]);
+		glColor3f(planete.color[0], planete.color[1], planete.color[2]);
+		gluSphere(sphere, planete.rayon, 16, 16);
+	} glPopMatrix();
 }
+
 
 void afficherScene()
 {
@@ -83,10 +91,13 @@ void afficherScene()
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
-   placerCamera(x_, y_, z_);
+   placerCamera(rayon_, theta_, phi_);
 
-   afficherPlanete(planeteTest);
-=======
+   for (int i = 0; i < nPlanete; i++)
+	afficherPlanete(planetes[i]);
+   glutSwapBuffers();
+}
+
 static void animer(int tempsPrec)
 {
 	// obtenir le temps depuis le début du programme, en millisecondes
@@ -104,26 +115,6 @@ static void animer(int tempsPrec)
 
 	// indiquer qu'il faut afficher à nouveau
 	glutPostRedisplay();
-}
-
-void afficherPlanete(Planet& planete){
-	glPushMatrix(); {
-		glTranslatef(planete.position[0], planete.position[1], planete.position[2]);
-		glColor3f(planete.color[0], planete.color[1], planete.color[2]);
-		gluSphere(sphere, planete.rayon, 16, 16);
-	} glPopMatrix();
-}
-
-void afficherScene()
-{
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	//affiche chacune des planetes
-	for (int i = 0; i < nPlanete; i++)
-		afficherPlanete(planetes[i]);	
->>>>>>> 59dbbeaf23152e8f3b4798b3e33a73e3bb9b3f22
-
-   glutSwapBuffers();
 }
 
 void redimensionnement( GLsizei w, GLsizei h )
@@ -162,22 +153,22 @@ void clavier( unsigned char touche, int x, int y )
       break;
 
    case 'w':
-	   x_ += 10;
+	   rayon_ += 5.;
 	   break;
    case 's':
-	   x_ -= 10;
+	   rayon_ -= 5.;
 	   break;
    case 'a':
-	   y_ += 10;
+	   theta_ += 5.;
 	   break;
    case 'd':
-	   y_ -= 10;
+	   theta_ -= 5.;
 	   break;
    case 'z':
-	   z_ += 10;
+	   phi_ += 5.;
 	   break;
    case 'x':
-	   z_ -= 10;
+	   phi_ -= 5.;
 	 
    }
 
