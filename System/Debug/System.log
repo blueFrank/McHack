@@ -1,9 +1,9 @@
-﻿Build started 21/02/2015 12:31:49 PM.
+﻿Build started 21/02/2015 2:09:15 PM.
      1>Project "C:\Users\FRANCIS\Documents\Visual Studio 2013\Projects\McHack\System\System.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\main.cpp
          main.cpp
-     1>c:\users\francis\documents\visual studio 2013\projects\mchack\system\source\main.cpp(199): warning C4129: 'e' : unrecognized character escape sequence
+     1>c:\users\francis\documents\visual studio 2013\projects\mchack\system\source\main.cpp(65): warning C4129: 'e' : unrecognized character escape sequence
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\FRANCIS\Documents\Visual Studio 2013\Projects\McHack\Debug\System.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\FRANCIS\Documents\Visual Studio 2013\Projects\McHack\Debug\System.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\FRANCIS\Documents\Visual Studio 2013\Projects\McHack\Debug\System.lib" /MACHINE:X86 Debug\main.obj
          System.vcxproj -> C:\Users\FRANCIS\Documents\Visual Studio 2013\Projects\McHack\Debug\System.exe
@@ -11,4 +11,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.83
+Time Elapsed 00:00:01.65

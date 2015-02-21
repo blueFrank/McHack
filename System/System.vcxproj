@@ -65,6 +65,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Header\float3.h" />
+    <ClInclude Include="Header\Planet.h" />
     <ClInclude Include="Header\varglob.h" />
   </ItemGroup>
   <ItemGroup>

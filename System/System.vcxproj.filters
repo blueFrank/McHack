@@ -21,6 +21,9 @@
     <ClInclude Include="Header\varglob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Planet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Ressources\glew32.dll">
