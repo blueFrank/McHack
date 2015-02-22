@@ -105,7 +105,7 @@ int main( int argc, char *argv[] )
    // taille de la fenetre
    glutInitWindowSize( g_largeur, g_hauteur );
    // création de la fenêtre
-   g_feneID = glutCreateWindow( "INF2705" );
+   g_feneID = glutCreateWindow( "McHacks" );
 
    // référencement de la fonction de rappel pour l'affichage
    glutDisplayFunc( afficherScene );
