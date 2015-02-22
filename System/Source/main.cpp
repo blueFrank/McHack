@@ -2,17 +2,31 @@
 #include <iostream>
 #include <GL/glut.h>
 #include "../Header/Octant.h"
+#include <math.h>
+
 #include "../Header/Planet.h"
 #include "../Header/varglob.h"
 #include "../Header/float3.h"
 
-//pointeurs utilisees
-GLUquadric* sphere = nullptr;
+//pointeur vers le modele
+GLUquadric *sphere = nullptr;
 Planet* planetes = nullptr;
+float rayon_;
+float theta_; 
+float phi_;
+
+void placerCamera(int rayon, int theta, int phi)
+{
+	float phiRad = DEG2RAD(phi);
+	float thetaRad = DEG2RAD(theta);
+
+	gluLookAt(rayon*cos(phiRad)*sin(thetaRad), rayon*cos(phiRad)*cos(thetaRad), rayon*sin(phiRad), 0, 0, 0, 0, 0, 1);
+}
 
 //nb de planete max et affichee en ce moment;
 const int MAX_PLANETE = 100;
-int nPlanete = 5;
+int nPlanete = 50;
+
 
 void initialisation()
 {
@@ -22,9 +36,15 @@ void initialisation()
    // définir le pipeline graphique
    glMatrixMode( GL_PROJECTION );
    glLoadIdentity();
-   glOrtho( -12, 12, -8, 8, -10, 10 );
+   gluPerspective(70., (GLdouble)g_largeur / (GLdouble)g_hauteur, 0.1, 10000);
+
    glMatrixMode( GL_MODELVIEW );
    glLoadIdentity();
+
+   rayon_ = -20;
+
+   //placerCamera(x_, y_, z_);
+ 
 
    //pointe vers le modele de la sphere
    sphere = gluNewQuadric();
@@ -32,15 +52,75 @@ void initialisation()
    //Cree toutes les planetes
    planetes = new Planet[MAX_PLANETE];
 
-   // activer le mélange de couleur pour bien voir les possibles plis à l'affichage
+   // activer le mélange de couleur pour bien voir les possibles plis à l'affichageh
+   //glEnable(GL_SMOOTH);
+   glEnable(GL_DEPTH);
    glEnable( GL_BLEND );
    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+   glEnable(GL_POINT_SMOOTH);
 }
 
 void updatePlanet(Planet& planete, int temps){
 	planete.position[0] += planete.speed[0] * temps / 1000.;
 	planete.position[1] += planete.speed[1] * temps / 1000.;
 	planete.position[2] += planete.speed[2] * temps / 1000.;
+}
+
+void collision(Planet& planet1, Planet& planet2){
+
+	//calcul distance
+	double deltaX = fabs(planet1.position[0] - planet2.position[0]);
+	double deltaY = fabs(planet1.position[1] - planet2.position[1]);
+	double deltaZ = fabs(planet1.position[2] - planet2.position[2]);
+	double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2) + pow(deltaZ, 2));
+
+	//Si collision, inverse les vitesses
+	if (distance < planet1.rayon + planet2.rayon){
+
+		//calcul du vecteur normal de reflexion
+		double vecNormal[3] = { planet1.position[0] - planet2.position[0],
+			planet1.position[1] - planet2.position[1],
+			planet1.position[2] - planet2.position[2] };
+
+
+		planet1.speed[0] -= planet1.speed[0];
+		planet1.speed[1] -= planet1.speed[1];
+		planet1.speed[2] -= planet1.speed[2];
+		planet2.speed[0] -= planet2.speed[0];
+		planet2.speed[1] -= planet2.speed[1];
+		planet2.speed[2] -= planet2.speed[2];
+	}
+
+	//ressort de la planete
+}
+
+void afficherPlanete(Planet& planete){
+	glPushMatrix(); {
+		glTranslatef(planete.position[0], planete.position[1], planete.position[2]);
+		glColor3f(planete.color[0], planete.color[1], planete.color[2]);
+		gluSphere(sphere, planete.rayon, 16, 16);
+	} glPopMatrix();
+}
+
+void afficherScene()
+{
+
+   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+   // définir le pipeline graphique
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   gluPerspective(45., (GLdouble)g_largeur / (GLdouble)g_hauteur, 0, 300.0);
+
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+
+   placerCamera(rayon_, theta_, phi_);
+
+   for (int i = 0; i < nPlanete; i++)
+		afficherPlanete(planetes[i]);
+
+   glutSwapBuffers();
 }
 
 static void animer(int tempsPrec)
@@ -58,28 +138,17 @@ static void animer(int tempsPrec)
 	for (int i = 0; i < nPlanete; i++)
 		updatePlanet(planetes[i], delai);
 
+	//Verifie si collision TODO:UTILISER QUADTREE
+	for (int i = 0; i < nPlanete; i++)
+		for (int j = 0; j < nPlanete; j++)
+			if (i != j)
+				collision(planetes[i], planetes[j]);
+
+
 	// indiquer qu'il faut afficher à nouveau
 	glutPostRedisplay();
 }
 
-void afficherPlanete(Planet& planete){
-	glPushMatrix(); {
-		glTranslatef(planete.position[0], planete.position[1], planete.position[2]);
-		glColor3f(planete.color[0], planete.color[1], planete.color[2]);
-		gluSphere(sphere, planete.rayon, 16, 16);
-	} glPopMatrix();
-}
-
-void afficherScene()
-{
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	//affiche chacune des planetes
-	for (int i = 0; i < nPlanete; i++)
-		afficherPlanete(planetes[i]);	
-
-   glutSwapBuffers();
-}
 
 void redimensionnement( GLsizei w, GLsizei h )
 {
@@ -115,7 +184,28 @@ void clavier( unsigned char touche, int x, int y )
 	  // la fenêtre a besoin d'être réafficher
 	  glutPostRedisplay();
       break;
+
+   case '+':
+	   rayon_ += 5.;
+	   break;
+   case '-':
+	   rayon_ -= 5.;
+	   break;
+   case 'a':
+	   theta_ += 5.;
+	   break;
+   case 'd':
+	   theta_ -= 5.;
+	   break;
+   case 'w':
+	   phi_ += 5.;
+	   break;
+   case 's':
+	   phi_ -= 5.;
+	 
    }
+
+   afficherScene();
 }
 
 void clavierSpecial( int touche, int x, int y )

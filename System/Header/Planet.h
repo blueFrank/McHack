@@ -13,6 +13,7 @@ static float MIN_COLOR = 0.1;
 static float MAX_POSITION = 100;
 static float MIN_POSITION = -100;
 
+
 class Planet{
 public:
 	Planet(){
