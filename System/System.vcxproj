@@ -67,12 +67,14 @@
     <ClInclude Include="Header\float3.h" />
     <ClInclude Include="Header\Planet.h" />
     <ClInclude Include="Header\varglob.h" />
+    <ClInclude Include="Octant.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ressources\glew32.dll" />
     <None Include="Ressources\glut32.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Octant.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

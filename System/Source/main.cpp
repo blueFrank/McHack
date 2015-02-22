@@ -1,6 +1,7 @@
+
 #include <iostream>
 #include <GL/glut.h>
-
+#include "../Header/Octant.h"
 #include "../Header/Planet.h"
 #include "../Header/varglob.h"
 #include "../Header/float3.h"

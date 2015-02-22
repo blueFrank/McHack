@@ -3,15 +3,15 @@
 
 #include <stdlib.h>
 
-float FACTEUR_MASSE_RAYON = 0.5;
-float MAX_RAYON = 5;
-float MIN_RAYON = 2;
-float MAX_VITESSE = 1;
-float MIN_VITESSE = -1;
-float MAX_COLOR = 0.9;
-float MIN_COLOR = 0.1;
-float MAX_POSITION = 100;
-float MIN_POSITION = -100;
+static float FACTEUR_MASSE_RAYON = 0.5;
+static float MAX_RAYON = 5;
+static float MIN_RAYON = 2;
+static float MAX_VITESSE = 1;
+static float MIN_VITESSE = -1;
+static float MAX_COLOR = 0.9;
+static float MIN_COLOR = 0.1;
+static float MAX_POSITION = 100;
+static float MIN_POSITION = -100;
 
 class Planet{
 public:
@@ -34,7 +34,6 @@ public:
 		//rayon
 		rayon = ((double)rand() / RAND_MAX)*(MAX_RAYON - MIN_RAYON) + MIN_RAYON;
 	}
-
 	//attributs des planetes
 	float getMass(){ return rayon * FACTEUR_MASSE_RAYON; }
 	float position[3];

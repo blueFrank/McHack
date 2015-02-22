@@ -24,6 +24,9 @@
     <ClInclude Include="Header\Planet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Octant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Ressources\glew32.dll">
@@ -35,6 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Octant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
