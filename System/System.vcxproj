@@ -67,7 +67,6 @@
     <ClInclude Include="Header\float3.h" />
     <ClInclude Include="Header\Planet.h" />
     <ClInclude Include="Header\varglob.h" />
-    <ClInclude Include="Octant.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ressources\glew32.dll" />
